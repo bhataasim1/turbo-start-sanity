@@ -134,6 +134,23 @@ export const blog = defineType({
         "The main content of your blog post with text, images, and formatting",
       group: GROUP.MAIN_CONTENT,
     }),
+    defineField({
+      name: "categories",
+      type: "array",
+      title: "Categories",
+      description: "Select one or more categories for this blog post",
+      of: [
+        defineArrayMember({
+          type: "reference",
+          to: [{ type: "category" }],
+          options: {
+            disableNew: true,
+          },
+        }),
+      ],
+      validation: (Rule) => Rule.min(1).error("At least one category is required"),
+      group: GROUP.MAIN_CONTENT,
+    }),
     ...seoFields,
     ...ogFields,
   ],

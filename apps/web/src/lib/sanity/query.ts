@@ -56,7 +56,13 @@ const blogCardFragment = /* groq */ `
   orderRank,
   ${imageFragment},
   publishedAt,
-  ${blogAuthorFragment}
+  ${blogAuthorFragment},
+  "categories": categories[]->{
+    _id,
+    name,
+    "slug": slug.current,
+    color
+  }
 `;
 
 const buttonsFragment = /* groq */ `
@@ -236,6 +242,33 @@ export const queryBlogSlugPageData = defineQuery(`
 
 export const queryBlogPaths = defineQuery(`
   *[_type == "blog" && defined(slug.current)].slug.current
+`);
+
+export const queryCategories = defineQuery(`
+  *[_type == "category"] | order(name asc){
+    _id,
+    name,
+    "slug": slug.current,
+    color,
+    description,
+    "blogCount": count(*[_type == "blog" && references(^._id) && (seoHideFromLists != true)])
+  }
+`);
+
+export const queryBlogsByCategory = defineQuery(`
+  *[_type == "blog" && (seoHideFromLists != true) && $category in categories[]->slug.current] | order(orderRank asc){
+    ${blogCardFragment}
+  }
+`);
+
+export const queryCategoryBySlug = defineQuery(`
+  *[_type == "category" && slug.current == $slug][0]{
+    _id,
+    name,
+    "slug": slug.current,
+    color,
+    description
+  }
 `);
 
 const ogFieldsFragment = /* groq */ `

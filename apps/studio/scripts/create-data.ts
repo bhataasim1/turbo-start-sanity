@@ -18,6 +18,7 @@ import {
   generateFAQs,
   generateMockAuthors,
   generateMockBlogPages,
+  generateMockCategories,
   generateMockSlugPages,
   getMockHomePageData,
 } from "../utils/mock-data";
@@ -94,6 +95,15 @@ async function createData() {
   console.log(`✅ Created ${faqs.length} FAQs`);
   console.log("\n");
 
+  console.log("🏷️ Generating categories...");
+  const categories = generateMockCategories();
+
+  for (const category of categories) {
+    transaction.create(category);
+  }
+  console.log(`✅ Created ${categories.length} categories`);
+  console.log("\n");
+
   console.log("⚙️ Generating global settings...");
   const settings = generateGlobalSettingsData(logo?.id);
 
@@ -127,6 +137,7 @@ async function createData() {
   const blogPages = generateMockBlogPages({
     imagesStore,
     authors: authorsPayloads,
+    categories,
   });
 
   for (const page of blogPages) {

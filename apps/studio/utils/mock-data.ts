@@ -367,16 +367,60 @@ export function generateMockAuthors(imagesStore: ImageStore) {
   });
 }
 
+export function generateMockCategories() {
+  const categories = [
+    {
+      name: "Sanity",
+      description: "Content management and development with Sanity CMS",
+      color: "blue",
+    },
+    {
+      name: "Next.js",
+      description: "React framework for production applications",
+      color: "green",
+    },
+    {
+      name: "Web Development",
+      description: "General web development topics and tutorials",
+      color: "purple",
+    },
+    {
+      name: "Design",
+      description: "UI/UX design principles and best practices",
+      color: "orange",
+    },
+    {
+      name: "Performance",
+      description: "Website performance optimization and best practices",
+      color: "red",
+    },
+  ];
+
+  return categories.map((category) => ({
+    _id: faker.string.uuid(),
+    _type: "category" as const,
+    name: category.name,
+    description: category.description,
+    slug: {
+      type: "slug",
+      current: slugify(category.name, { lower: true }),
+    },
+    color: category.color,
+  }));
+}
+
 type Author = ReturnType<typeof generateMockAuthors>[number];
 
 interface BlogPageGenerationOptions {
   imagesStore: ImageStore;
   authors: Author[];
+  categories: ReturnType<typeof generateMockCategories>;
 }
 
 export function generateMockBlogPages({
   imagesStore,
   authors,
+  categories,
 }: BlogPageGenerationOptions) {
   const length = faker.number.int({ min: 2, max: 5 });
   const blogImages = imagesStore.filter((image) => image.type === "blog");
@@ -385,6 +429,8 @@ export function generateMockBlogPages({
     const title = generatePageTitle();
     const author = faker.helpers.arrayElement(authors);
     const image = faker.helpers.arrayElement(blogImages);
+    // Randomly assign 1-3 categories to each blog post
+    const selectedCategories = faker.helpers.arrayElements(categories, { min: 1, max: 3 });
 
     return {
       _id: faker.string.uuid(),
@@ -420,6 +466,11 @@ export function generateMockBlogPages({
           _ref: author._id,
         },
       ],
+      categories: selectedCategories.map((category) => ({
+        _key: faker.string.uuid(),
+        _type: "reference",
+        _ref: category._id,
+      })),
     };
   });
 }

@@ -1,15 +1,20 @@
 import { notFound } from "next/navigation";
 
 import { BlogCard, BlogHeader, FeaturedBlogCard } from "@/components/blog-card";
+import { CategoryNavigation } from "@/components/category-navigation";
 import { PageBuilder } from "@/components/pagebuilder";
 import { SimpleSearch } from "@/components/search/simple-search";
 import { sanityFetch } from "@/lib/sanity/live";
-import { queryBlogIndexPageData } from "@/lib/sanity/query";
+import { queryBlogIndexPageData, queryCategories } from "@/lib/sanity/query";
 import { getSEOMetadata } from "@/lib/seo";
 import { handleErrors } from "@/utils";
 
 async function fetchBlogPosts() {
   return await handleErrors(sanityFetch({ query: queryBlogIndexPageData }));
+}
+
+async function fetchCategories() {
+  return await handleErrors(sanityFetch({ query: queryCategories }));
 }
 
 export async function generateMetadata() {
@@ -32,7 +37,11 @@ export async function generateMetadata() {
 
 export default async function BlogIndexPage() {
   const [res, err] = await fetchBlogPosts();
+  const [categoriesRes, categoriesErr] = await fetchCategories();
+  
   if (err || !res?.data) notFound();
+  
+  const categories = categoriesErr ? [] : categoriesRes?.data || [];
 
   const {
     blogs = [],
@@ -79,6 +88,13 @@ export default async function BlogIndexPage() {
     <main className="bg-background">
       <div className="container my-16 mx-auto px-4 md:px-6">
         <BlogHeader title={title} description={description} />
+        
+        {/* Category Navigation */}
+        {categories.length > 0 && (
+          <div className="mt-8 mb-6">
+            <CategoryNavigation categories={categories} />
+          </div>
+        )}
         
         {/* Search Component */}
         <div className="mt-8 mb-12">
