@@ -4,6 +4,7 @@ import type { QueryBlogIndexPageDataResult } from "@/lib/sanity/sanity.types";
 
 import { Badge } from "@workspace/ui/components/badge";
 import { SanityImage } from "./sanity-image";
+import { PokemonDisplay } from "./pokemon-display";
 
 type Blog = NonNullable<
   NonNullable<QueryBlogIndexPageDataResult>["blogs"]
@@ -162,7 +163,7 @@ function AuthorSection({ authors }: { authors: Blog["authors"] }) {
   );
 }
 export function FeaturedBlogCard({ blog }: BlogCardProps) {
-  const { title, publishedAt, slug, authors, description, image, categories } = blog ?? {};
+  const { title, publishedAt, slug, authors, description, image, categories, pokemon } = blog ?? {};
 
   return (
     <article className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
@@ -176,6 +177,11 @@ export function FeaturedBlogCard({ blog }: BlogCardProps) {
           description={description}
           isFeatured
         />
+        {pokemon && (
+          <div className="mt-6">
+            <PokemonDisplay pokemon={pokemon} />
+          </div>
+        )}
         <AuthorSection authors={authors} />
       </div>
     </article>
@@ -195,7 +201,7 @@ export function BlogCard({ blog }: BlogCardProps) {
     );
   }
 
-  const { title, publishedAt, slug, authors, description, image, categories } = blog;
+  const { title, publishedAt, slug, authors, description, image, categories, pokemon } = blog;
 
   return (
     <article className="grid grid-cols-1 gap-4 w-full">
@@ -207,6 +213,11 @@ export function BlogCard({ blog }: BlogCardProps) {
         <BlogMeta publishedAt={publishedAt} />
         <CategoryBadges categories={categories as any} />
         <BlogContent title={title} slug={slug} description={description} />
+        {pokemon && (
+          <div className="mt-4">
+            <PokemonDisplay pokemon={pokemon} />
+          </div>
+        )}
         <AuthorSection authors={authors} />
       </div>
     </article>

@@ -62,7 +62,8 @@ const blogCardFragment = /* groq */ `
     name,
     "slug": slug.current,
     color
-  }
+  },
+  pokemon
 `;
 
 const buttonsFragment = /* groq */ `

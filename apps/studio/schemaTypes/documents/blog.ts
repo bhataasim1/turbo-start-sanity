@@ -6,6 +6,7 @@ import { FileTextIcon } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 import { PathnameFieldComponent } from "../../components/slug-field-component";
+import { PokemonFieldComponent } from "../../components/pokemon-field-component";
 import { GROUP, GROUPS } from "../../utils/constant";
 import { ogFields } from "../../utils/og-fields";
 import { seoFields } from "../../utils/seo-fields";
@@ -150,6 +151,16 @@ export const blog = defineType({
       ],
       validation: (Rule) => Rule.min(1).error("At least one category is required"),
       group: GROUP.MAIN_CONTENT,
+    }),
+    defineField({
+      name: "pokemon",
+      type: "pokemon",
+      title: "Featured Pokemon",
+      description: "Select a Pokemon to feature in this blog post",
+      group: GROUP.MAIN_CONTENT,
+      components: {
+        field: PokemonFieldComponent,
+      },
     }),
     ...seoFields,
     ...ogFields,
