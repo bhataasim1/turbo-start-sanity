@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import type { QueryBlogIndexPageDataResult } from "@/lib/sanity/sanity.types";
 
+import { Badge } from "@workspace/ui/components/badge";
 import { SanityImage } from "./sanity-image";
 
 type Blog = NonNullable<
@@ -80,6 +81,38 @@ function BlogMeta({ publishedAt }: { publishedAt: string | null }) {
   );
 }
 
+function CategoryBadges({ categories }: { categories: Blog["categories"] }) {
+  if (!categories || categories.length === 0) return null;
+
+  const colorVariants = {
+    blue: "bg-blue-100 text-blue-800 border-blue-200",
+    green: "bg-green-100 text-green-800 border-green-200",
+    purple: "bg-purple-100 text-purple-800 border-purple-200",
+    orange: "bg-orange-100 text-orange-800 border-orange-200",
+    red: "bg-red-100 text-red-800 border-red-200",
+    yellow: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    pink: "bg-pink-100 text-pink-800 border-pink-200",
+    indigo: "bg-indigo-100 text-indigo-800 border-indigo-200",
+  };
+
+  return (
+    <div className="flex flex-wrap gap-2 mb-4">
+      {categories.map((category) => {
+        const colorClass = colorVariants[category.color as keyof typeof colorVariants] || colorVariants.blue;
+        return (
+          <Badge
+            key={category._id}
+            variant="outline"
+            className={`text-xs ${colorClass}`}
+          >
+            {category.name}
+          </Badge>
+        );
+      })}
+    </div>
+  );
+}
+
 function BlogContent({
   title,
   slug,
@@ -129,13 +162,14 @@ function AuthorSection({ authors }: { authors: Blog["authors"] }) {
   );
 }
 export function FeaturedBlogCard({ blog }: BlogCardProps) {
-  const { title, publishedAt, slug, authors, description, image } = blog ?? {};
+  const { title, publishedAt, slug, authors, description, image, categories } = blog ?? {};
 
   return (
     <article className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
       <BlogImage image={image} title={title} />
       <div className="space-y-6">
         <BlogMeta publishedAt={publishedAt} />
+        <CategoryBadges categories={categories as any} />
         <BlogContent
           title={title}
           slug={slug}
@@ -155,14 +189,13 @@ export function BlogCard({ blog }: BlogCardProps) {
         <div className="h-48 bg-muted rounded-2xl animate-pulse" />
         <div className="space-y-2">
           <div className="h-4 w-24 bg-muted rounded animate-pulse" />
-          <div className="h-6 w-full bg-muted rounded animate-pulse" />
           <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
         </div>
       </article>
     );
   }
 
-  const { title, publishedAt, slug, authors, description, image } = blog;
+  const { title, publishedAt, slug, authors, description, image, categories } = blog;
 
   return (
     <article className="grid grid-cols-1 gap-4 w-full">
@@ -172,6 +205,7 @@ export function BlogCard({ blog }: BlogCardProps) {
       </div>
       <div className="w-full space-y-4">
         <BlogMeta publishedAt={publishedAt} />
+        <CategoryBadges categories={categories as any} />
         <BlogContent title={title} slug={slug} description={description} />
         <AuthorSection authors={authors} />
       </div>
